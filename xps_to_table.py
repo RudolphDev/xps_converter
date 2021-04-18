@@ -131,7 +131,7 @@ class XpsToTable:
         while re.match('\s+', content_list[i]):
             i = i+1
         # Stop the process if the second table is detected
-        if re.match('^[A-Z]{1}$', content_list[i]):
+        if re.match('^[A-Z]{1,2}$', content_list[i]):
             return
         else:
             pattern = '^Unknown[0-9]+'
