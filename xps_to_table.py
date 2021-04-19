@@ -21,7 +21,7 @@ class XpsToTable:
 
     def __init__(self):
         """Create the XpsToTable Class instance and initialize all attributes
-        """        
+        """
         self.__input_file = None
         self.__output_file = None
         self.__replicates_format = []
@@ -48,7 +48,7 @@ class XpsToTable:
                 self.__output_file = arg
             elif opt in ("-r", "--replicates"):
                 self.__fill_replicates_format(arg)
-                
+
         if (self.__input_file == None) or (self.__output_file == None) or (self.__replicates_format == []):
             print("Inputfile, Outputfile and replicates parameters are mandatory")
             self.__print_usage()
@@ -60,7 +60,9 @@ class XpsToTable:
         doc = fitz.open(self.__input_file)
         for page in doc.pages(0, doc.page_count, 1):
             content = page.get_text("text")
-            self.__get_data_from_content(content)
+            result = self.__get_data_from_content(content)
+            if result == False:
+                break
         doc.close()
 
     def write_exp_xls(self):
@@ -131,9 +133,8 @@ class XpsToTable:
         while re.match('\s+', content_list[i]):
             i = i+1
         # Stop the process if the second table is detected
-        print(content_list[i])
-        if (re.match('^[A-Z]{1,2}$', content_list[i])) or (content_list[i] == "Key:"):
-            return
+        if (re.match('^[A-Z]{1,2}$', content_list[i])) or (content_list[i] == "Key:") or (re.match('^[0-9]+.[0-9]+', content_list[i])):
+            return False
         else:
             pattern = '^Unknown[0-9]+'
             while not re.match(pattern, content_list[i]):
